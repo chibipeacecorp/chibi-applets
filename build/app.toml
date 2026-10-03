@@ -1,0 +1,6 @@
+[config]
+resizable = false
+size = [600, 600]
+
+[navbar]
+orientation = "left"

@@ -1,0 +1,114 @@
+[text]
+    [h1]
+    fontID = 1
+    size = 32
+        [h1.color]
+        disabled = 0x000000FF
+            [h1.color.idle]
+            normal = 0x000000FF
+            hovered = 0x000000FF
+            clicked = 0x000000FF
+
+            [h1.color.selected]
+            normal = 0x000000FF
+            hovered = 0x000000FF
+            clicked = 0x000000FF
+
+    [h2]
+    fontID = 1
+    size = 24
+        [h2.color]
+        disabled = 0xAFAFAFFF
+            [h2.color.idle]
+            normal = 0x000000FF
+            hovered = 0x000000FF
+            clicked = 0x000000FF
+
+            [h2.color.selected]
+            normal = 0x000000FF
+            hovered = 0x000000FF
+            clicked = 0x000000FF
+
+    [h3]
+    fontID = 1
+    size = 18
+        [h3.color]
+        disabled = 0xAFAFAFFF
+            [h3.color.idle]
+            normal = 0x000000FF
+            hovered = 0x000000FF
+            clicked = 0x000000FF
+
+            [h3.color.selected]
+            normal = 0x000000FF
+            hovered = 0x000000FF
+            clicked = 0x000000FF
+
+    [h4]
+    fontID = 1
+    size = 12
+        [h4.color]
+        disabled = 0xAFAFAFFF
+            [h4.color.idle]
+            normal = 0x000000FF
+            hovered = 0x000000FF
+            clicked = 0x000000FF
+
+            [h4.color.selected]
+            normal = 0x000000FF
+            hovered = 0x000000FF
+            clicked = 0x000000FF
+
+
+[panel]
+    [panel.base]
+        [panel.base.color]
+        disabled = 0x907f8fFF
+            [panel.base.color.idle]
+            normal = 0x634c62FF
+            hovered = 0x745d73FF
+            clicked = 0x00FF00FF
+            [panel.base.color.selected]
+            normal = 0xB8B8BAFF
+            hovered = 0xAFAFAFFF
+            clicked = 0xF8F8FAFF
+
+    [panel.outline]
+    width = 4
+        [panel.outline.color]
+        disabled = 0x907f8fFF
+            [panel.outline.color.idle]
+            normal = 0x371936FF
+            hovered = 0xD2D4DCFF
+            clicked = 0xAFAFAFFF
+            [panel.outline.color.selected]
+            normal = 0xF8F8FAFF
+            hovered = 0xD2D4DCFF
+            clicked = 0xAFAFAFFF
+
+
+[button]
+    [button.base]
+        [button.base.color]
+        disabled = 0x000000FF
+            [button.base.color.idle]
+            normal = 0x634c62FF
+            hovered = 0xAFAFAFFF
+            clicked = 0xF8F8FAFF
+            [button.base.color.selected]
+            normal = 0xB8B8BAFF
+            hovered = 0xAFAFAFFF
+            clicked = 0xF8F8FAFF
+
+    [button.outline]
+    width = 2
+        [button.outline.color]
+        disabled = 0x000000FF
+            [button.outline.color.idle]
+            normal = 0xAFAFAFFF
+            hovered = 0xF8F8FAFF
+            clicked = 0xAFAFAFFF
+            [button.outline.color.selected]
+            normal = 0xF8F8FAFF
+            hovered = 0xAFAFAFFF
+            clicked = 0xAFAFAFFF

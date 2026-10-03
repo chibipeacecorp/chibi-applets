@@ -1,0 +1,23 @@
+# info regarding the modules's placement, and any other editable properties
+[config]
+resizable = false
+size = [150, 0]
+
+
+
+# maybe variables or flags you alter Lua/C behavior
+[context]
+
+
+
+# individual elements and their arrangement
+# # Z-index is in the actual, written ordering of the elements in the module file FOR NOW?
+[content]
+bounds = [150,0,300,300]        # x, y, width, height
+padding = [0,0,0,0]             # top, left, bottom, right
+type = "panel"
+text = "Welcome to your test Module."
+align = "center"
+visibility = true
+fill = "fill"
+state = "idle"

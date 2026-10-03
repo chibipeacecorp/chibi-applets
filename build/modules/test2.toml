@@ -1,0 +1,54 @@
+# info regarding the modules's placement, and any other editable properties
+[config]
+resizable = false
+size = [600, 600]
+
+
+
+# maybe variables or flags you alter Lua/C behavior
+[context]
+
+
+
+# individual elements and their arrangement
+# # Z-index is in the actual, written ordering of the elements in the module file FOR NOW?
+[content]
+    padding = [0,0,0,0]
+    type = "panel" # for now, consider this as being the unique themeID, where as functionally it is the two bitflags together
+    text = "Welcome to your Home Module."
+    align = "Center"
+    visiblity = "Visible"
+    # if this were "Absolute", a position key/value would be expected, and error thrown if not
+    fill = "Fill"
+    [content.header]
+        align = "Top"
+        fill = "Fill_X"
+        [content.header.flavorText]
+            type = "panel"
+            text = "Click this button -> "
+            font = 1
+            size = "h4"
+            align = "Left"
+            visiblity = "Visible"
+            fill = "Fill"
+        [content.header.mainButton]
+            type = "button"
+            text = "Test Button"
+            font = 1
+            size = "h4"
+            align = "Right"
+            visiblity = "Visible"
+            fill = "Fill"
+            selectable = true
+            onClick = 4 # corresponds to EID_HIDE_GROUP
+            clickGroup = ["content.body"] # corresponds to list of affected keys
+    [content.body]
+        padding = [0,0,0,0]
+        type = "panel"
+        text = "3====D"
+        font = 1
+        size = "h2"
+        align = "Center"
+        visiblity = "Visible"
+        fill = "Fill"
+
