@@ -56,7 +56,6 @@ bool initUI()
     if ( config.size.x <= 0 || config.size.y <= 0 ) { return false; }
     InitWindow(config.size.x, config.size.y, "Chibi Calc");
 
-    // test fill of first entry in elements
     arena.modules[0].elements[0] = getElementFromToml(getModuleContent());
 
     s_Element parent = init_GenericPanel();
@@ -106,7 +105,6 @@ float sizeToFloat(e_ElementSize size)
 void setPositionByAlignment(s_Element* parent, s_Element* child)
 {
     // gets the top-left point of the parent object
-    // might as well be a fucking rect
     Vector2 tempPosition =
     {
         parent->bounds.val.shape.x,
@@ -114,8 +112,9 @@ void setPositionByAlignment(s_Element* parent, s_Element* child)
     };
     Vector2 tempSize =
     {
-        parent->bounds.val.shape.width * sizeToFloat(child->size.val.intVal),
-        parent->bounds.val.shape.height * sizeToFloat(child->size.val.intVal)
+        parent->bounds.val.shape.width*sizeToFloat(child->size.val.intVal),
+        parent->bounds.val.shape.height*(sizeToFloat(child->size.val.intVal)*2)
+        #warning "Currently, element y scale is being bumped up with a hard-coded value"
     };
 
     int xOffset = 0;
@@ -123,10 +122,10 @@ void setPositionByAlignment(s_Element* parent, s_Element* child)
 
     switch(child->align.val.intVal)
     {
-        case ALIGN_CENTER:
+        case ALIGN_CENTER: // x=(p.w/2)-(c.w/2) ; y=(p.h/2)-(c.h/2)
         {
-            // xOffset = ;
-            // yOffset = ;
+            xOffset = (parent->bounds.val.shape.width / 2) - (tempSize.x / 2);
+            yOffset = (parent->bounds.val.shape.height / 2) - (tempSize.y / 2);
         } break;
 
         case ALIGN_TOP|ALIGN_LEFT: { /*default position*/ } break;
@@ -219,7 +218,7 @@ void buildNavBar(s_Element base)
     nav_button.type.val.intVal = TYPE_BTTN;
     nav_button.fill.val.intVal = MAX_FILL;
     nav_button.size.val.intVal = SIZE_H5;
-    nav_button.align.val.intVal = ALIGN_TOP|ALIGN_RIGHT;
+    nav_button.align.val.intVal = ALIGN_CENTER;
     positionChildInParent(&nav_panel, &nav_button);
     navBar[1] = nav_button;
 

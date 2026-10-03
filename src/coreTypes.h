@@ -36,7 +36,7 @@ typedef enum
   MAX_TYPE
 } e_ElementType;
 
-// could maybe replace with raw percantages from file. the H1-H6 notation is just a visual convenience
+// NEED to replace with something like SIZE_ABS(), 
 typedef enum
 {
   SIZE_H1,        // 100%
