@@ -7,7 +7,7 @@
 int activeElementsLength = 10;
 s_UIArena arena = {0};
 s_Element navBar[6] = {0};
-// adding a comment for testing; TESTING AGAIN
+
 
 // Setup
 void buildNavBar(s_Element base);
