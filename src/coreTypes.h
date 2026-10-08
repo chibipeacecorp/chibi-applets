@@ -101,12 +101,11 @@ typedef enum
 
 typedef enum
 {
-    CON_SINGLE,
-    CON_HBOX,
-    CON_VBOX,
-    CON_GRID,
-    CON_ALIGN_FORCED,
-    MAX_CON
+  CON_SINGLE,       // single child container
+  CON_HBOX,         // handle entire container as a single row
+  CON_VBOX,         // handle entire container as a single column
+  CON_TILE,         // a more literal, uniform grid
+  MAX_CON           // defaults to single
 }e_ElementContainer;
 
 /*    STRUCTS    ******************************************************/

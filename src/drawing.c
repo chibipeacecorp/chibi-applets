@@ -112,23 +112,15 @@ void getRemainingSpace(s_Element* element)
         finalBudget += sizeToFloat(element->children[i].size.val.floatVal);
         
         /*
-        maybe an e_ContainerType to simplify what to look for
-        at tge most basic, every element is a 3x3 grid
+        Maybe an e_ContainerType to simplify what to look for
+        Most elements will be either single-child, or some type of box, vertical or horizontal. This inherently means that most elements will be cleanly aligned through-out the module, without needing much direct changing. think { [{ [] }] []}
+
+
+        At the most complex, a non-uniform grid container looks like:
         each cell in the grid has a %
         each alignment takes from a cell,
         fill takes from a row/column
         size determines amount of cell is taken
-        
-        ALIGN_CENTER:
-        divide panel by 9??
-        find center
-        
-        parent container types:
-        single item
-        hbox
-        vbox
-        tiling grid
-        
         */
         
     }
