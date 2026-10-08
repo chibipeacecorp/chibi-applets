@@ -35,6 +35,7 @@ IntVector2 getElementCenter(s_Element* element);
 IntVector2 getElementLeft(s_Element* element);
 IntVector2 getElementRight(s_Element* element);
 
+
 //another test file
 
 
@@ -99,6 +100,39 @@ float sizeToFloat(e_ElementSize size)
     }
     
     return temp;
+}
+
+
+void getRemainingSpace(s_Element* element)
+{
+    float finalBudget = 1.0; // fillable %
+    
+    for(int i = 0; i < 10; i++)
+    {
+        finalBudget += sizeToFloat(element->children[i].size.val.floatVal);
+        
+        /*
+        maybe an e_ContainerType to simplify what to look for
+        at tge most basic, every element is a 3x3 grid
+        each cell in the grid has a %
+        each alignment takes from a cell,
+        fill takes from a row/column
+        size determines amount of cell is taken
+        
+        ALIGN_CENTER:
+        divide panel by 9??
+        find center
+        
+        parent container types:
+        single item
+        hbox
+        vbox
+        tiling grid
+        
+        */
+        
+    }
+    
 }
 
 

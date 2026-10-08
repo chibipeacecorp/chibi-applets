@@ -3,6 +3,6 @@
 // STANDARD
 #include <string.h>
 
-// GAME
+// CORE
 #include "core.h"
 #include "drawing.h"

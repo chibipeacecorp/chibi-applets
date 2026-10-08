@@ -4,9 +4,6 @@
     Functions that directly change state of elements, without needing to know who/where the element is
 */
 
-//extern e_Module currentTool;
-//extern e_Module lastTool;
-
 int lastTool = 0;
 int currentTool = 0;
 
@@ -68,8 +65,6 @@ void handleClickEvent(e_EventID id)
 
 
 // should take ptr or ID???
-// hover existing is immutable
-// what can hover, and what happens when hover, is mutable
 void hover() { }
 
 

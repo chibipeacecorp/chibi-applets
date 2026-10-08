@@ -3,14 +3,15 @@
 void processDrawing();
 void closeApp();
 
-// best used in the case of larger projects where finding the file to check the doc comment takes longer than ctrl+f
+// in-development formatting for in-house documentation helper
 /**********************************************************
 * Entry Point
-*    - Used to handle incoming arguments when app is called from a CLI.
+*    - Used to handle incoming arguments
 *    - Used to orchestrate the calls to other files, but does a minimal amount of processing itself.
-* argc    ::    Counted the number of arguments. 
+* argc    ::    Count the number of arguments. 
 * argv    ::    Array of argument entries. argv[0] always equals the application name.
 **********************************************************/ 
+
 // TEMPS
 float cToF(float c) { return (c * 1.8) + 32; }
 float fToC(float f) { return (f - 32) / 1.8; }
@@ -96,7 +97,7 @@ void checkMouseCollisions()
         } else { unhoverElement(i); }  
     }
 
-    // COULD optimize by checking if mouse.posX is far enough left to be in navbar area, and noy run thr chrck otherwise
+    // COULD optimize by checking if mouse.posX is far enough left to be in navbar area, and not run the check otherwise
     // check if mouse overlaps a control in the navbar
     for (int i = 0; i < 5; i++)
     {

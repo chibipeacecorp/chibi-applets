@@ -28,4 +28,3 @@ int invertInt(int val) { return val * -1; }
 
 
 /*    DEBUG    ******************************************************/
-void printInt(int val) { printf("Checking for: %d\n", val); }

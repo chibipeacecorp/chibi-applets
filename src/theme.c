@@ -47,8 +47,6 @@ Color getColorFromInt64(int64_t toml_value)
 s_ThemeColors getColorsFromToml(toml_datum_t toml)
 {
     s_ThemeColors temp = {0};
-    // select-hovered
-    // need to update struct with new color options
 
     if(toml.type != TOML_TABLE) {return temp;}
 
@@ -62,7 +60,6 @@ s_ThemeColors getColorsFromToml(toml_datum_t toml)
     temp.idle = getColorFromInt64(idleNormal.u.int64);
     temp.hovered = getColorFromInt64(idleHovered.u.int64);
     temp.clicked = getColorFromInt64(idleClicked.u.int64);
-
 
     // toml_datum_t selected = toml_get(toml, "selected");
     // toml_datum_t selectedNormal = toml_get(selected, "normal");
@@ -99,7 +96,7 @@ s_ThemeData getThemeTypeFromToml(toml_datum_t obj)
     return defaultTheme;
 }
 
-// CURRENTLY RETURNING THE LOCAL DATA POINTER. collapse into a single theme getter
+
 void getThemeData()
 {
     FILE* themeFile = fopen("themes/style.toml", "r+");
