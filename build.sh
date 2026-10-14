@@ -2,6 +2,7 @@
 
 # ARGUEMENTS; will clean up build types, platforms, etc, later
 compileMode=$1
+languageMode="-std=c23"
 
 # OPTIMIZATION
 opti="-O2"
@@ -22,4 +23,4 @@ linking="-lraylib -lgdi32 -lwinmm"
 
 
 
-gcc $opti $ignores $warnings $src -o $buildDir -I $includes -L $libraries $linking 
+gcc $languageMode $opti $ignores $warnings $src -o $buildDir -I $includes -L $libraries $linking 

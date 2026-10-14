@@ -4,10 +4,11 @@
 #include "theme.h"
 
 
-int activeElementsLength = 10;
+
 s_UIArena arena = {0};
 s_Element navBar[6] = {0};
-
+int activeElementsLength = 10;
+int currentModuleID = 0;
 
 // Setup
 void buildNavBar(s_Element base);
@@ -60,7 +61,7 @@ bool initUI()
     arena.modules[0].elements[0] = getElementFromToml(getModuleContent());
 
     s_Element parent = init_GenericPanel();
-    parent.bounds.val.shape = (Rectangle){0, 0, config.size.x, config.size.y}; 
+    parent.bounds = (Rectangle){0, 0, config.size.x, config.size.y}; 
     buildNavBar(parent);
 
 
@@ -82,6 +83,7 @@ For every module,
 
 //#define INIT_ATT(KEY_VAL) (s_ModuleAttribute){.key=KEY_VAL, .val=(s_ModuleAttributeValue){0}}
 
+#warning "these std convertors can be bundle together elsewhere"
 float sizeToFloat(e_ElementSize size)
 {
     float temp = 0;
@@ -102,27 +104,84 @@ float sizeToFloat(e_ElementSize size)
     return temp;
 }
 
-
-void getRemainingSpace(s_Element* element)
+s_Module* getCurrentModule() { return &arena.modules[currentModuleID]; }
+s_Element* getElementByChildID(s_Module* module, int id)
 {
-    float finalBudget = 1.0; // fillable %
+    if(module == NULL) { return &navBar[0]; }
+
+    return &module->elements[id];
+}
+
+/*
+Maybe an e_ContainerType to simplify what to look for
+Most elements will be either single-child, or some type of box, vertical or horizontal. 
+This inherently means that most elements will be cleanly aligned through-out the module, without needing much direct changing. think { [{ [] }] []}
+
+At the most complex, a non-uniform grid container looks like:
+each cell in the grid has a %
+each alignment takes from a cell,
+fill takes from a row/column
+size determines amount of cell is taken, assuming no fill
+*/
+Rectangle getNextAvailableSpace(s_Element* parent)
+{
+    if(parent->containerType == CON_SINGLE) {return parent->bounds;}
+    /*
+    CONSTRAINED container types like hbox, forcefully set
+    the size of it's children
+    ergo, if there is such a parent, skip the fill/size check for children
+    align is ignored, tho the parent container can be aligned
+    provided it isnt also within a constrained parent
+    */
     
+    // divisor
+    int presentChildren = 0;
+    int childCounter = 0;
+    int presentChildIDs[10] = {-1};
+    s_Element* currentChild = 0;
+
     for(int i = 0; i < 10; i++)
     {
-        finalBudget += sizeToFloat(element->children[i].size.val.floatVal);
-        
-        /*
-        Maybe an e_ContainerType to simplify what to look for
-        Most elements will be either single-child, or some type of box, vertical or horizontal. This inherently means that most elements will be cleanly aligned through-out the module, without needing much direct changing. think { [{ [] }] []}
+        currentChild = getElementByChildID(getCurrentModule(), parent->children[i]);
 
-
-        At the most complex, a non-uniform grid container looks like:
-        each cell in the grid has a %
-        each alignment takes from a cell,
-        fill takes from a row/column
-        size determines amount of cell is taken
-        */
+        // get valid children only; increment divisor
+        if( (presentChildIDs[i] = currentChild->elementID) < 0) {continue;}
+        presentChildren++;
+   
+    }
+            
+    switch(parent->containerType)
+    {
+        case CON_HBOX:
+        {
+            for(int i = 0; i < 10; i++)
+            {    
+                if(presentChildIDs[i] < 0) {continue;}
+                currentChild->bounds.width = parent->bounds.width / presentChildren;
+                currentChild->bounds.y = parent->bounds.y;
+                currentChild->bounds.x = parent->bounds.x + (currentChild->bounds.width * childCounter);
+                childCounter++;
+            }
+        }break;
         
+        case CON_VBOX:
+        {
+            for(int i = 0; i < 10; i++)
+            {    
+                if(presentChildIDs[i] < 0) {continue;}
+                currentChild->bounds.height = parent->bounds.height / presentChildren;
+                currentChild->bounds.x = parent->bounds.x;
+                currentChild->bounds.y = parent->bounds.y + (currentChild->bounds.height * childCounter);
+                childCounter++;
+            }   
+        }break;
+        
+        case CON_TILE:
+        {
+            
+        }break;
+        
+        default: {/*do nothing*/};
     }
     
 }
@@ -133,32 +192,41 @@ void setPositionByAlignment(s_Element* parent, s_Element* child)
     // gets the top-left point of the parent object
     Vector2 tempPosition =
     {
-        parent->bounds.val.shape.x,
-        parent->bounds.val.shape.y
+        parent->bounds.x,
+        parent->bounds.y
     };
     Vector2 tempSize =
     {
-        parent->bounds.val.shape.width*sizeToFloat(child->size.val.intVal),
-        parent->bounds.val.shape.height*(sizeToFloat(child->size.val.intVal)*2)
+        parent->bounds.width*sizeToFloat(child->size),
+        parent->bounds.height*(sizeToFloat(child->size)*2)
         #warning "Currently, element y scale is being bumped up with a hard-coded value"
     };
 
     int xOffset = 0;
     int yOffset = 0;
+    e_Alignment testAlign = CENTER|RIGHT;
 
-    switch(child->align.val.intVal)
+    switch(testAlign)
+    {
+        case CENTER: {/**/} break;
+        case CENTER|RIGHT: {/**/} break;
+        case RIGHT: {/**/} break;
+        default: {/*yur*/}
+    }
+
+    switch(child->align)
     {
         case ALIGN_CENTER: // x=(p.w/2)-(c.w/2) ; y=(p.h/2)-(c.h/2)
         {
-            xOffset = (parent->bounds.val.shape.width / 2) - (tempSize.x / 2);
-            yOffset = (parent->bounds.val.shape.height / 2) - (tempSize.y / 2);
+            xOffset = (parent->bounds.width / 2) - (tempSize.x / 2);
+            yOffset = (parent->bounds.height / 2) - (tempSize.y / 2);
         } break;
 
-        case ALIGN_TOP|ALIGN_LEFT: { /*default position*/ } break;
+        case ALIGN_TOP&ALIGN_LEFT: { /*default position*/ } break;
 
-        case ALIGN_TOP|ALIGN_RIGHT:
+        case ALIGN_TOP&ALIGN_RIGHT:
         {
-            xOffset = parent->bounds.val.shape.width - tempSize.x;
+            xOffset = parent->bounds.width - tempSize.x;
         }break;
 
         default: {}
@@ -166,24 +234,24 @@ void setPositionByAlignment(s_Element* parent, s_Element* child)
 
     tempPosition.x += xOffset;
     tempPosition.y += yOffset;
-    child->bounds.val.shape = (Rectangle) {tempPosition.x, tempPosition.y, tempSize.x, tempSize.y};
+    child->bounds = (Rectangle) {tempPosition.x, tempPosition.y, tempSize.x, tempSize.y};
 }
 
 
 void setPositionByFill(s_Element* parent, s_Element* child)
 {    
-    switch(child->fill.val.intVal)
+    switch(child->fill)
     {
         case FILL:
         {
-            child->bounds.val.shape = parent->bounds.val.shape;
+            child->bounds = parent->bounds;
         } break;
         case FILL_X:
         {
-            child->bounds.val.shape.x = parent->bounds.val.shape.x;
-            child->bounds.val.shape.y = parent->bounds.val.shape.y;
-            child->bounds.val.shape.width = parent->bounds.val.shape.width;
-            child->bounds.val.shape.height = parent->bounds.val.shape.height * sizeToFloat(child->size.val.intVal);
+            child->bounds.x = parent->bounds.x;
+            child->bounds.y = parent->bounds.y;
+            child->bounds.width = parent->bounds.width;
+            child->bounds.height = parent->bounds.height * sizeToFloat(child->size);
         } break;
         default: {};
     }
@@ -192,17 +260,17 @@ void setPositionByFill(s_Element* parent, s_Element* child)
 #warning "Padding is currently absolute, and does not preserve dimensions of element"
 void positionElementByPadding(s_Element* element)
 {
-    if (element->padding.val.shape.y != 0)      // top
-    { element->bounds.val.shape.y += element->padding.val.shape.y; }
+    if (element->padding[0] != 0)      // 
+    { element->bounds.x += element->padding[0]; }
 
-    if (element->padding.val.shape.x != 0)      // left
-    { element->bounds.val.shape.x += element->padding.val.shape.x; }
+    if (element->padding[1] != 0)      // 
+    { element->bounds.y += element->padding[1]; }
 
-    if (element->padding.val.shape.height != 0) // bottom
-    { element->bounds.val.shape.height -= element->padding.val.shape.height; }
+    if (element->padding[2] != 0) // 
+    { element->bounds.height -= element->padding[2]; }
 
-    if (element->padding.val.shape.width != 0)  // right
-    { element->bounds.val.shape.width -= element->padding.val.shape.width; }
+    if (element->padding[3] != 0)  // 
+    { element->bounds.width -= element->padding[3]; }
 }
 
 /*
@@ -220,10 +288,10 @@ void positionElementByPadding(s_Element* element)
 */
 void positionChildInParent(s_Element* parent, s_Element* child)
 {
-    if (child->fill.val.intVal == MAX_FILL) // this is treated as a null value
+    if (child->fill == MAX_FILL) // this is treated as a null value
     {setPositionByAlignment(parent, child); positionElementByPadding(child); return;}
 
-    if (child->fill.val.intVal == FILL_ABS)
+    if (child->fill == FILL_ABS)
     {child->bounds = parent->bounds; positionElementByPadding(child); return;}
 
     setPositionByFill(parent, child);
@@ -232,21 +300,25 @@ void positionChildInParent(s_Element* parent, s_Element* child)
 
 void buildNavBar(s_Element base)
 {
+    #warning "pass IDs into the init_Element() functions to allow for easy parenting/childing"
     s_Element nav_panel = init_GenericPanel();
-    nav_panel.fill.val.intVal = FILL_X;
-    nav_panel.align.val.intVal = ALIGN_CENTER;
-    nav_panel.size.val.intVal = SIZE_H6;
-    nav_panel.padding.val.shape = (Rectangle) {0,0,0,0};
+    nav_panel.fill = FILL_X;
+    nav_panel.align = ALIGN_CENTER;
+    nav_panel.size = SIZE_H6;
+    nav_panel.padding = {0};
     positionChildInParent(&base, &nav_panel);
-    navBar[0] = nav_panel;
+    nav_panel.elementID = 0;
+    navBar[nav_panel.elementID] = nav_panel;
 
     s_Element nav_button = init_GenericPanel();
-    nav_button.type.val.intVal = TYPE_BTTN;
-    nav_button.fill.val.intVal = MAX_FILL;
-    nav_button.size.val.intVal = SIZE_H5;
-    nav_button.align.val.intVal = ALIGN_CENTER;
+    nav_button.type = TYPE_BTTN;
+    nav_button.fill = MAX_FILL;
+    nav_button.size = SIZE_H5;
+    nav_button.align = ALIGN_CENTER;
     positionChildInParent(&nav_panel, &nav_button);
-    navBar[1] = nav_button;
+    nav_button.elementID = 1;
+    nav_button.parentID = nav_panel.elementID;
+    navBar[nav_button.elementID] = nav_button;
 
 
     // for (int i = 0; i < MAX_MODULES; i++)
@@ -292,30 +364,29 @@ Rectangle getControlBounds(int index)
 *******************************************************/
 void drawElement(s_Element* element)
 {
-    // drop elements with an invalid type
-    if(element->type.key != KEY_TYPE) {return;}
-    if(element->type.val.intVal >= MAX_TYPE) {printf("invalid type val"); return;}
+    // drop elements with an invalid types
+    if(element->type == MAX_TYPE) {printf("invalid type val"); return;}
     
-    switch( element->type.val.intVal )
+    switch( element->type )
     {
         case TYPE_BTTN: {drawButton(element);} break;
         case TYPE_PANEL: {drawPanel(element);} break;
-        default: {}
+        default: {/*if this happend something very broke*/}
     }
 }
 
 void drawTextElement(s_Element* element)
 {
-    DrawText(element->text.val.stringVal, element->bounds.val.shape.x, element->bounds.val.shape.y, 12, WHITE);
+    DrawText(element->text, element->bounds.x, element->bounds.y, 12, WHITE);
 }
 
 void drawPanel(s_Element* element)
 {
     Color base = {0};
     Color outline = {0};
-    s_ThemeData* ptr_Theme = &arena.theme[element->type.val.intVal];
+    s_ThemeData* ptr_Theme = &arena.theme[element->type];
 
-    switch(element->state.val.intVal)
+    switch(element->state)
     {
         case STATE_DISABLED:
         {
@@ -351,8 +422,8 @@ void drawPanel(s_Element* element)
     }
 
     
-    DrawRectangleRec(element->bounds.val.shape, base);
-    DrawRectangleLinesEx(element->bounds.val.shape, ptr_Theme->outlineWidth, outline);
+    DrawRectangleRec(element->bounds, base);
+    DrawRectangleLinesEx(element->bounds, ptr_Theme->outlineWidth, outline);
     // drawTextElement(element);
 }
 
@@ -405,125 +476,17 @@ s_Element init_GenericPanel()
 {
     return (s_Element)
     {
-        .padding = (s_ModuleAttribute)
-        {
-            .key=KEY_PADDING,
-            .val = (s_ModuleAttributeValue)
-            {
-                .stringVal = "",
-                .intVal = 0,
-                .floatVal = 0,
-                .shape = (Rectangle){0,0,0,0},
-                .boolVal = false
-            }
-        },
-        .bounds = (s_ModuleAttribute)
-        {
-            .key=KEY_BOUNDS,
-            .val = (s_ModuleAttributeValue)
-            {
-                .stringVal = "",
-                .intVal = 0,
-                .floatVal = 0,
-                .shape = (Rectangle){0,0,25,25},
-                .boolVal = false
-            }
-        },
-        .text = (s_ModuleAttribute)
-        {
-            .key=KEY_TEXT,
-            .val = (s_ModuleAttributeValue)
-            {
-                .stringVal = "default",
-                .intVal = 0,
-                .floatVal = 0,
-                .shape = {0},
-                .boolVal = false
-            }
-        },
-        .type = (s_ModuleAttribute)
-        {
-            .key=KEY_TYPE,
-            .val = (s_ModuleAttributeValue)
-            {
-                .stringVal = "",
-                .intVal = TYPE_PANEL,
-                .floatVal = 0,
-                .shape = {0},
-                .boolVal = false
-            }
-        },
-        .align = (s_ModuleAttribute)
-        {
-            .key=KEY_ALIGN,
-            .val = (s_ModuleAttributeValue)
-            {
-                .stringVal = "",
-                .intVal = ALIGN_CENTER,
-                .floatVal = 0,
-                .shape = {0},
-                .boolVal = false
-            }
-        },
-        .fill = (s_ModuleAttribute)
-        {
-            .key=KEY_FILL,
-            .val = (s_ModuleAttributeValue)
-            {
-                .stringVal = "",
-                .intVal = MAX_FILL,
-                .floatVal = 0,
-                .shape = {0},
-                .boolVal = false
-            }
-        },
-        .state = (s_ModuleAttribute)
-        {
-            .key=KEY_STATE,
-            .val = (s_ModuleAttributeValue)
-            {
-                .stringVal = "",
-                .intVal = STATE_IDLE,
-                .floatVal = 0,
-                .shape = {0},
-                .boolVal = false
-            }
-        },
-        .visibility = (s_ModuleAttribute)
-        {
-            .key=KEY_VISIBILITY,
-            .val = (s_ModuleAttributeValue)
-            {
-                .stringVal = "",
-                .intVal = 0,
-                .floatVal = 0,
-                .shape = {0},
-                .boolVal = true
-            }
-        },
-        .size = (s_ModuleAttribute)
-        {
-            .key=KEY_SIZE,
-            .val = (s_ModuleAttributeValue)
-            {
-                .stringVal = "",
-                .intVal = SIZE_H4,
-                .floatVal = 0,
-                .shape = {0},
-                .boolVal = false
-            }
-        },
-        .resizable = (s_ModuleAttribute)
-        {
-            .key=KEY_RESIZABLE,
-            .val = (s_ModuleAttributeValue)
-            {
-                .stringVal = "",
-                .intVal = 0,
-                .floatVal = 0,
-                .shape = {0},
-                .boolVal = false
-            }
-        }
+        .parentID = -1,
+        .elementID = -1,
+        .padding[4] = {0},
+        .bounds = (Rectangle) {50,50,50,50},
+        .text = "test",
+        .type = TYPE_PANEL,
+        .align = ALIGN_CENTER,
+        .fill = FILL,
+        .state = STATE_IDLE,
+        .visibility = true,
+        .size = 1.0,
+        .resizable = false
     };
 }

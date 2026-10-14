@@ -46,6 +46,26 @@ typedef enum
   MAX_STATE = 1 << 5
 } e_ElementState;
 
+
+typedef enum : uint16_t
+{
+  CENTER = 1,
+  LEFT = 2,
+  RIGHT = 4,
+  TOP = 8,
+  BOTTOM = 16,
+  CENTER_LEFT = CENTER|LEFT,
+  CENTER_RIGHT = CENTER|RIGHT,
+  CENTER_TOP = CENTER|TOP,
+  CENTER_BOTTOM = CENTER|BOTTOM,
+  TOP_LEFT = TOP|LEFT,
+  TOP_RIGHT = TOP|RIGHT,
+  BOTTOM_LEFT = BOTTOM|LEFT,
+  BOTTOM_RIGHT = BOTTOM|RIGHT,
+  ALIGN_ABSOLUTE = 32,
+} e_Alignment;
+
+
 typedef enum
 {
   ALIGN_CENTER = 1 << 0,
@@ -87,16 +107,6 @@ typedef enum
   KEY_RESIZABLE,
   MAX_KEY           // used as null key, as it is never valid unless as a loop comparison
 }e_ModuleKey;
-
-
-// bit-masked in case a single att-value can have more than one value
-typedef enum
-{
-  ATT_STRING = 1 << 0,
-  ATT_INT = 1 << 1,
-  ATT_FLOAT = 1 << 2,
-  ATT_BOOL = 1 << 3
-}e_AttributeType;
 
 
 typedef enum
@@ -144,39 +154,25 @@ typedef struct
 } s_ThemeData;
 
 
-// would a union be performant or useful here?  
-typedef struct
-{
-  // e_AttributeType att_Type; 
-  const char* stringVal;
-  int intVal;
-  float floatVal;
-  Rectangle shape;
-  bool boolVal;
-}s_ModuleAttributeValue;
-
-typedef struct
-{
-  e_ModuleKey key;
-  s_ModuleAttributeValue val;
-}s_ModuleAttribute;
-
+#warning "does a union of flags make sense?"
 typedef struct 
 {
-  s_ModuleAttribute padding;
-  s_ModuleAttribute bounds;
-  s_ModuleAttribute text;                         
-  s_ModuleAttribute type;
-  s_ModuleAttribute align;
-  s_ModuleAttribute fill;
-  s_ModuleAttribute state;
-  s_ModuleAttribute visibility;
-  s_ModuleAttribute size;
-  s_ModuleAttribute resizable;
+  char* text;
+  Rectangle bounds;
+  int children[10];
+  int padding[4];
+  float size;
+  int elementID;
+  int parentID;           
+  e_ElementType type;
+  e_ElementAlign align;
+  e_ElementFill fill;
+  e_ElementState state;
+  e_ElementContainer containerType;
   e_EventID eid_OnHover;
   e_EventID eid_OnClick;
-  int parentID;
-  s_Element children[10];
+  bool visibility;
+  bool resizable;
 } s_Element;
 
 typedef struct

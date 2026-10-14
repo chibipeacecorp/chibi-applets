@@ -329,62 +329,53 @@ s_Element getElementFromToml(toml_datum_t toml)
             case KEY_PADDING:
             {
                 if(searchResult.type != TOML_ARRAY) {continue;}
-                temp.padding.key = KEY_PADDING;
-                temp.padding.val.shape = tomlToRect(searchResult);
+                #warning "add a 4 int array parser function for toml"
+                //temp.padding = tomlToRect(searchResult);
             }break;
             case KEY_BOUNDS:
             {
                 if(searchResult.type != TOML_ARRAY) {continue;}
-                temp.bounds.key = KEY_BOUNDS;
-                temp.bounds.val.shape = tomlToRect(searchResult);
+                temp.bounds = tomlToRect(searchResult);
             } break;
             case KEY_TEXT:
             {
                 if(searchResult.type != TOML_STRING) {continue;}
-                temp.text.key = KEY_TEXT;
-                temp.text.val.stringVal = tomlToString(searchResult);
+                temp.text = tomlToString(searchResult);
             } break;
             case KEY_TYPE:
             {
                 if(searchResult.type != TOML_STRING) {continue;}
-                temp.type.key = KEY_TYPE;
-                temp.type.val.intVal = tomlToElementType(searchResult);
+                temp.type = tomlToElementType(searchResult);
             } break;
             case KEY_ALIGN:
             {
                 if(searchResult.type != TOML_STRING) {continue;}
-                temp.align.key = KEY_ALIGN;
-                temp.align.val.intVal = tomlToElementAlign(searchResult);
+                temp.align = tomlToElementAlign(searchResult);
             } break;
             case KEY_FILL:
             {
                 if(searchResult.type != TOML_STRING) {continue;}
-                temp.fill.key = KEY_FILL;
-                temp.fill.val.intVal = tomlToElementFill(searchResult);
+                temp.fill = tomlToElementFill(searchResult);
             } break;
             case KEY_STATE:
             {
                 if(searchResult.type != TOML_STRING) {continue;}
-                temp.state.key = KEY_STATE;
-                temp.state.val.intVal = tomlToElementState(searchResult);
+                temp.state = tomlToElementState(searchResult);
             } break;
             case KEY_VISIBILITY:
             {
                 if(searchResult.type != TOML_BOOLEAN) {continue;}
-                temp.visibility.key = KEY_VISIBILITY;
-                temp.visibility.val.boolVal = tomlToBool(searchResult);
+                temp.visibility = tomlToBool(searchResult);
             } break;
             case KEY_SIZE:
             {
                 if(searchResult.type != TOML_STRING) {continue;}
-                temp.size.key = KEY_SIZE;
-                temp.size.val.intVal = tomlToElementSize(searchResult);
+                temp.size = tomlToElementSize(searchResult);
             } break;
             case KEY_RESIZABLE:
             {
                 if(searchResult.type != TOML_BOOLEAN) {continue;}
-                temp.resizable.key = KEY_RESIZABLE;
-                temp.resizable.val.boolVal = tomlToBool(searchResult);
+                temp.resizable = tomlToBool(searchResult);
             } break;
             default: { }
         }
