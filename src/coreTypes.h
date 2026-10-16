@@ -36,15 +36,16 @@ typedef enum
   MAX_SIZE
 }e_ElementSize;
 
-typedef enum
+typedef enum : uint8_t
 {
-  STATE_DISABLED = 1 << 0,
-  STATE_IDLE = 1 << 1,
-  STATE_HOVERED = 1 << 2,
-  STATE_CLICKED = 1 << 3,
-  STATE_SELECTED = 1 << 4,
-  MAX_STATE = 1 << 5
-} e_ElementState;
+  DISABLED = 1,
+  IDLE = 2,
+  HOVERED = 4,
+  CLICKED = 8,
+  SELECTED = 16,
+  SELECTED_HOVERED = SELECTED|HOVERED,
+  SELECTED_CLICKED = SELECTED|CLICKED
+} e_State;
 
 
 typedef enum : uint16_t
@@ -65,17 +66,6 @@ typedef enum : uint16_t
   ALIGN_ABSOLUTE = 32,
 } e_Alignment;
 
-
-typedef enum
-{
-  ALIGN_CENTER = 1 << 0,
-  ALIGN_LEFT = 1 << 1,
-  ALIGN_RIGHT = 1 << 2,
-  ALIGN_TOP = 1 << 3,
-  ALIGN_BOTTOM = 1 << 4,
-  ALIGN_ABS = 1 << 5,
-  MAX_ALIGN = 1 << 6
-} e_ElementAlign;
 
 typedef enum
 {
@@ -165,9 +155,9 @@ typedef struct
   int elementID;
   int parentID;           
   e_ElementType type;
-  e_ElementAlign align;
+  e_Alignment align;
   e_ElementFill fill;
-  e_ElementState state;
+  e_State state;
   e_ElementContainer containerType;
   e_EventID eid_OnHover;
   e_EventID eid_OnClick;

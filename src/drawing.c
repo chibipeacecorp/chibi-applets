@@ -125,6 +125,8 @@ size determines amount of cell is taken, assuming no fill
 */
 Rectangle getNextAvailableSpace(s_Element* parent)
 {
+    Rectangle tempRect = (Rectangle) {50,50,50,50};
+
     if(parent->containerType == CON_SINGLE) {return parent->bounds;}
     /*
     CONSTRAINED container types like hbox, forcefully set
@@ -184,6 +186,7 @@ Rectangle getNextAvailableSpace(s_Element* parent)
         default: {/*do nothing*/};
     }
     
+    return tempRect;
 }
 
 
@@ -204,31 +207,27 @@ void setPositionByAlignment(s_Element* parent, s_Element* child)
 
     int xOffset = 0;
     int yOffset = 0;
-    e_Alignment testAlign = CENTER|RIGHT;
-
-    switch(testAlign)
-    {
-        case CENTER: {/**/} break;
-        case CENTER|RIGHT: {/**/} break;
-        case RIGHT: {/**/} break;
-        default: {/*yur*/}
-    }
-
+    
     switch(child->align)
     {
-        case ALIGN_CENTER: // x=(p.w/2)-(c.w/2) ; y=(p.h/2)-(c.h/2)
+        case CENTER: // x=(p.w/2)-(c.w/2) ; y=(p.h/2)-(c.h/2)
         {
             xOffset = (parent->bounds.width / 2) - (tempSize.x / 2);
             yOffset = (parent->bounds.height / 2) - (tempSize.y / 2);
         } break;
 
-        case ALIGN_TOP&ALIGN_LEFT: { /*default position*/ } break;
-
-        case ALIGN_TOP&ALIGN_RIGHT:
-        {
-            xOffset = parent->bounds.width - tempSize.x;
-        }break;
-
+        case LEFT: { /*default position*/ } break;
+        case RIGHT: {/**/} break;
+        case TOP: {/**/} break;
+        case BOTTOM: {/**/} break;
+        case CENTER_LEFT: {/**/} break;
+        case CENTER_RIGHT: {/**/} break;
+        case CENTER_TOP: {/**/} break;
+        case CENTER_BOTTOM: {/**/} break;
+        case TOP_LEFT: {/**/} break;
+        case TOP_RIGHT: {xOffset = parent->bounds.width - tempSize.x;} break;
+        case BOTTOM_LEFT: {/**/} break;
+        case BOTTOM_RIGHT: {/**/} break;
         default: {}
     }
 
@@ -303,9 +302,9 @@ void buildNavBar(s_Element base)
     #warning "pass IDs into the init_Element() functions to allow for easy parenting/childing"
     s_Element nav_panel = init_GenericPanel();
     nav_panel.fill = FILL_X;
-    nav_panel.align = ALIGN_CENTER;
-    nav_panel.size = SIZE_H6;
-    nav_panel.padding = {0};
+    nav_panel.align = CENTER;
+    //nav_panel.size = SIZE_H6;
+    //nav_panel.padding = {0};
     positionChildInParent(&base, &nav_panel);
     nav_panel.elementID = 0;
     navBar[nav_panel.elementID] = nav_panel;
@@ -314,7 +313,7 @@ void buildNavBar(s_Element base)
     nav_button.type = TYPE_BTTN;
     nav_button.fill = MAX_FILL;
     nav_button.size = SIZE_H5;
-    nav_button.align = ALIGN_CENTER;
+    nav_button.align = CENTER;
     positionChildInParent(&nav_panel, &nav_button);
     nav_button.elementID = 1;
     nav_button.parentID = nav_panel.elementID;
@@ -388,36 +387,42 @@ void drawPanel(s_Element* element)
 
     switch(element->state)
     {
-        case STATE_DISABLED:
+        case DISABLED:
         {
             base = ptr_Theme->base.disabled;
             outline = ptr_Theme->outline.disabled;
         } break;
-        case STATE_IDLE:
+        case IDLE:
         {
             base = ptr_Theme->base.idle;
             outline = ptr_Theme->outline.idle;
         } break;
-        case STATE_CLICKED:
+        case CLICKED:
         {
             base = ptr_Theme->base.clicked;
             outline = ptr_Theme->outline.clicked;
         } break;
-        case STATE_HOVERED:
+        case HOVERED:
         {
             base = ptr_Theme->base.hovered;
             outline = ptr_Theme->outline.hovered;
         } break;
-        case STATE_SELECTED:
+        case SELECTED:
         {
             base = ptr_Theme->base.selected;
             outline = ptr_Theme->outline.selected;
         } break;
-        case STATE_SELECTED & STATE_HOVERED:
+        case SELECTED_HOVERED:
         {
             base = ptr_Theme->base.selectedHovered;
             outline = ptr_Theme->outline.selectedHovered;
         } break;
+        case SELECTED_CLICKED:
+        {
+            base = ptr_Theme->base.clicked;
+            outline = ptr_Theme->outline.clicked;
+        } break;
+
         default: {} break;
     }
 
@@ -478,13 +483,13 @@ s_Element init_GenericPanel()
     {
         .parentID = -1,
         .elementID = -1,
-        .padding[4] = {0},
+        .padding = {0,0,0,0},
         .bounds = (Rectangle) {50,50,50,50},
         .text = "test",
         .type = TYPE_PANEL,
-        .align = ALIGN_CENTER,
+        .align = CENTER,
         .fill = FILL,
-        .state = STATE_IDLE,
+        .state = IDLE,
         .visibility = true,
         .size = 1.0,
         .resizable = false

@@ -67,32 +67,44 @@ e_ElementType tomlToElementType(toml_datum_t toml)
     return temp;
 }
 
-e_ElementState tomlToElementState(toml_datum_t toml)
+e_State tomlToElementState(toml_datum_t toml)
 {
-    e_ElementState temp = MAX_STATE;
+    e_State temp = DISABLED;
     if(toml.type != TOML_STRING) {return temp;}
 
-    if(strcmp(toml.u.s, "disabled") == 0) {return STATE_DISABLED;}
-    if(strcmp(toml.u.s, "idle") == 0) {return STATE_IDLE;}
-    if(strcmp(toml.u.s, "hovered") == 0) {return STATE_HOVERED;}
-    if(strcmp(toml.u.s, "clicked") == 0) {return STATE_CLICKED;}
-    if(strcmp(toml.u.s, "selected") == 0) {return STATE_SELECTED;}
+    if(strcmp(toml.u.s, "disabled") == 0) {return DISABLED;}
+    if(strcmp(toml.u.s, "idle") == 0) {return IDLE;}
+    if(strcmp(toml.u.s, "hovered") == 0) {return HOVERED;}
+    if(strcmp(toml.u.s, "clicked") == 0) {return CLICKED;}
+    if(strcmp(toml.u.s, "selected") == 0) {return SELECTED;}
+    if(strcmp(toml.u.s, "selected-hovered") == 0) {return SELECTED_HOVERED;}
+    if(strcmp(toml.u.s, "selected-clicked") == 0) {return SELECTED_CLICKED;}
 
     return temp;
 }
 
-e_ElementAlign tomlToElementAlign(toml_datum_t toml)
+e_Alignment tomlToElementAlign(toml_datum_t toml)
 {
-    e_ElementAlign temp = MAX_ALIGN;
+    e_Alignment temp = CENTER;
     if(toml.type != TOML_STRING) {return temp;}
 
-    if(strcmp(toml.u.s, "center") == 0) {return ALIGN_CENTER;}
-    if(strcmp(toml.u.s, "left") == 0) {return ALIGN_LEFT;}
-    if(strcmp(toml.u.s, "right") == 0) {return ALIGN_RIGHT;}
-    if(strcmp(toml.u.s, "top") == 0) {return ALIGN_TOP;}
-    if(strcmp(toml.u.s, "bottom") == 0) {return ALIGN_BOTTOM;}
-    if(strcmp(toml.u.s, "absolute") == 0) {return ALIGN_ABS;}
+    if(strcmp(toml.u.s, "center") == 0) {return CENTER;}
+    if(strcmp(toml.u.s, "left") == 0) {return LEFT;}
+    if(strcmp(toml.u.s, "right") == 0) {return RIGHT;}
+    if(strcmp(toml.u.s, "top") == 0) {return TOP;}
+    if(strcmp(toml.u.s, "bottom") == 0) {return BOTTOM;}
 
+    if(strcmp(toml.u.s, "center-left") == 0) {return CENTER_LEFT;}
+    if(strcmp(toml.u.s, "center-right") == 0) {return CENTER_RIGHT;}
+    if(strcmp(toml.u.s, "center-top") == 0) {return CENTER_TOP;}
+    if(strcmp(toml.u.s, "center-bottom") == 0) {return CENTER_BOTTOM;}
+
+    if(strcmp(toml.u.s, "top-left") == 0) {return TOP_LEFT;}
+    if(strcmp(toml.u.s, "top-right") == 0) {return TOP_RIGHT;}
+    if(strcmp(toml.u.s, "bottom-left") == 0) {return BOTTOM_LEFT;}
+    if(strcmp(toml.u.s, "bottom-right") == 0) {return BOTTOM_RIGHT;}
+
+    if(strcmp(toml.u.s, "absolute") == 0) {return ALIGN_ABSOLUTE;}
 
     return temp;
 }
